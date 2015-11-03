@@ -1,5 +1,10 @@
 #!perl -w
 
+# Downloads a file repeatedly until successful
+# Possible modification: keep largest stub so far
+
+$size = 0;
+
 $url = $ARGV[0];
 $file = $ARGV[1];
 
@@ -11,8 +16,11 @@ while("true"){
 	
 	if ($? != 0) {
 		print "deleting stub\n";
-		system(@del_args) == 0
-			or die "could not delete stub, major error";
+		if ($size < -s $file){
+			$size = -s $file;
+			system(@del_args) == 0
+				or die "could not delete stub, major error";
+		}
 	}
 	else {
 		exit 0;
